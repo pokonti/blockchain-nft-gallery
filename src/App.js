@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import './App.css';
 
-// 1. Your Contract Address
 const CONTRACT_ADDRESS = "0x8c1D21f2Fc7c1C6A5F323AB62bCB1229091118F1";
 
-// 2. We use a "Public RPC" for tBNB so we don't rely on Metamask for reading
 const TBNB_RPC_URL = "https://data-seed-prebsc-1-s1.binance.org:8545/";
 
 const ABI = [
@@ -26,14 +24,11 @@ function App() {
     setLoading(true);
 
     try {
-      // --- CHANGE: Use JsonRpcProvider for tBNB ---
-      // This forces the app to look at BSC Testnet, regardless of your wallet settings
       const provider = new ethers.JsonRpcProvider(TBNB_RPC_URL);
       
       const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
       
       // Get total count
-      // If this fails now, it means the contract address is wrong, not the network.
       const totalString = await contract.nextTokenId();
       const total = Number(totalString);
       
@@ -44,7 +39,6 @@ function App() {
         try {
             const uri = await contract.tokenURI(i);
             
-            // Fix IPFS URLs
             let url = uri;
             if (uri.startsWith("ipfs://")) {
                 url = uri.replace("ipfs://", "https://gateway.pinata.cloud/ipfs/");
